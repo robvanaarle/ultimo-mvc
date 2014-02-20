@@ -92,11 +92,9 @@ class Module {
    * Constructor.
    * @param Application $application The application this module is constructed
    * for.
-   * @param string $basePath The base directory of the module.
    */
-  public function __construct(Application $application, $basePath) {
+  public function __construct(Application $application) {
     $this->application = $application;
-    $this->basePath = $basePath;
     
     // cache this module namespace and name
     $thisClass = get_called_class();
@@ -118,6 +116,10 @@ class Module {
    * @return string The base directory of the module.
    */
   public function getBasePath() {
+    if ($this->basePath === null) {
+      $reflectionClass = new \ReflectionClass($this);
+      $this->basePath = dirname($reflectionClass->getFileName());
+    }
     return $this->basePath;
   }
   

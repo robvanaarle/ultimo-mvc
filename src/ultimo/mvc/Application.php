@@ -53,12 +53,6 @@ class Application {
   protected $pluginBroker;
   
   /**
-   * The directory paths where modules are located.
-   * @var array
-   */
-  protected $modulesDirs = array();
-  
-  /**
    * The environment the application is running in.
    * @var string
    */
@@ -93,9 +87,6 @@ class Application {
         'controller' => 'index',
         'action' => 'index'
     )));
-    
-    // the application dir contains modules by default
-    $this->addModulesDir($this->getApplicationDir());
     
     // add default plugins
     $this->pluginBroker = new plugins\PluginBroker();
@@ -147,17 +138,6 @@ class Application {
   }
   
   /**
-   * Adds a directory path where modules are located.
-   * @param string $dirPath directory path where modules are located.
-   * @return Application This instance for fluid design.
-   */
-  public function addModulesDir($dirPath) {
-    array_unshift($this->modulesDirs, rtrim($dirPath, '\\/'));
-    set_include_path(get_include_path() . PATH_SEPARATOR . $dirPath);
-    return $this;
-  }
-  
-  /**
    * Returns the name of the application.
    * @return string The name of the application.
    */
@@ -199,28 +179,11 @@ class Application {
       
       // try to create the module and put it in cache
       $moduleClassName = $namespace . '\Module';
-      $moduleRelPath = ltrim(str_replace('\\', DIRECTORY_SEPARATOR, $namespace), '\\/');
-      $moduleClassRelPath = $moduleRelPath . DIRECTORY_SEPARATOR . 'Module.php';
       
-      if (class_exists($moduleClassName)) {
-        
-        // find the module in the module directories
-        $modulePath = null;
-        foreach ($this->modulesDirs as $modulesDir) {
-          if (is_readable($modulesDir . DIRECTORY_SEPARATOR . $moduleClassRelPath)) {
-            $modulePath =  $modulesDir . DIRECTORY_SEPARATOR . $moduleRelPath;
-            break;
-          }
-        }
-        
-        if ($modulePath === null) {
-          throw new exceptions\ApplicationException("Module class {$moduleClassRelPath} could not be found in modules directories", exceptions\ApplicationException::MODULECLASS_NOT_FOUND);
-        }
-        
-        $module = new $moduleClassName($this, $modulePath);
+      if (class_exists($moduleClassName) && is_subclass_of($moduleClassName, 'ultimo\mvc\Module')) {
+        $module = new $moduleClassName($this);
         $this->modules[$namespace] = $module;
         $this->pluginBroker->invoke('onModuleCreated', array($module));
-        
       } else {
         $this->modules[$namespace] = null;
       }
