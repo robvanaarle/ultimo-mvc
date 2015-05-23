@@ -19,12 +19,12 @@
       	},
       	{
         	"type": "vcs",
-        	"url": "https://github.com/robvanaarle/ultimo-phptpl-mvc"
+        	"url": "https://github.com/robvanaarle/ultimo-mvc0phptpl"
       	}
     ],
     "require": {
         "robvanaarle/ultimo-http": "dev-master",
-        "robvanaarle/ultimo-phptpl-mvc": "dev-master"
+        "robvanaarle/ultimo-mvc-phptpl": "dev-master"
     },
     "autoload": {
     		"psr-4": {

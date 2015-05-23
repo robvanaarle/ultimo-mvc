@@ -125,7 +125,7 @@ abstract class Controller extends Facade {
   
   /**
    * Returns whether a action exists.
-   * @param unknown_type $actionName The name of the action to check the
+   * @param string $actionName The name of the action to check the
    * existence of.
    * @return boolean Whether the action exists.
    */
